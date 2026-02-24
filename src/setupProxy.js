@@ -99,9 +99,18 @@ module.exports = function(app) {
       // Simulate scroll to trigger lazy loading
       console.log(`📜 Simulating scroll to trigger lazy load...`);
       await page.evaluate(async () => {
+        // Scroll down slowly to trigger intersection observers
+        const scrollStep = 300;
+        const maxScroll = document.body.scrollHeight;
+        
+        for (let y = 0; y < maxScroll; y += scrollStep) {
+          window.scrollTo(0, y);
+          await new Promise(r => setTimeout(r, 100));
+        }
+        
         // Scroll to bottom
         window.scrollTo(0, document.body.scrollHeight);
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 1500));
         
         // Scroll to middle
         window.scrollTo(0, document.body.scrollHeight / 2);
@@ -111,13 +120,14 @@ module.exports = function(app) {
         window.scrollTo(0, 0);
         await new Promise(r => setTimeout(r, 1000));
         
-        // Dispatch events
+        // Dispatch events to trigger lazy load
         window.dispatchEvent(new Event('scroll'));
         window.dispatchEvent(new Event('resize'));
+        window.dispatchEvent(new Event('load'));
       });
       
-      // Wait for lazy content
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Wait for lazy content to load
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
       // Get rendered HTML
       const html = await page.content();

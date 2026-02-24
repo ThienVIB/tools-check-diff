@@ -1,0 +1,65 @@
+{
+  "name": "url-comparison-tool",
+  "version": "1.0.0",
+  "description": "Tool to compare DOM, SEO, and Performance between Dev and Production URLs",
+  "private": true,
+  "dependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "axios": "^1.13.5",
+    "cheerio": "^1.2.0",
+    "commander": "^14.0.3",
+    "diff": "^5.1.0",
+    "file-saver": "^2.0.5",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.0",
+    "jszip": "^3.10.1",
+    "lighthouse": "^13.0.3",
+    "node-fetch": "^2.7.0",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "puppeteer": "^24.37.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^3.5.0",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/diff": "^5.0.8",
+    "@types/file-saver": "^2.0.7",
+    "@types/pixelmatch": "^5.2.6",
+    "@types/xml2js": "^0.4.14"
+  },
+  "bin": {
+    "url-compare": "./cli.js"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "compare": "node cli.js compare",
+    "cli:init": "node cli.js init",
+    "cli:history": "node cli.js history"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "devUrl": "https://pws-dev.vib/",
+  "prodUrl": "https://pws.vib/",
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "deviceScaleFactor": 1,
+    "isMobile": false
+  },
+  "alerts": {
+    "enabled": true,
+    "thresholds": {
+      "htmlSizeDiff": 20,
+      "scriptCountDiff": 5,
+      "imageCountDiff": 10,
+      "performanceScoreDiff": 10,
+      "brokenLinksMax": 0,
+      "lighthousePerformanceMin": 80
+    },
+    "notifyOn": ["error", "warning"]
+  },
+  "features": {
+    "lighthouse": true,
+    "linkAnalysis": true,
+    "visualRegression": true,
+    "resourceTracking": true
+  },
+  "auth": {
+    "headers": {}
+  }
+}

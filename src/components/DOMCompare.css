@@ -1,0 +1,400 @@
+.dom-compare h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.comparison-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.comparison-section h3 {
+  color: #555;
+  margin-bottom: 15px;
+  font-size: 18px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 8px;
+}
+
+.comparison-row-wrapper {
+  margin-bottom: 2px;
+}
+
+.comparison-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.comparison-row.expandable {
+  cursor: pointer;
+  border-left: 4px solid transparent;
+}
+
+.comparison-row.expandable:hover {
+  background: #f8f9fa;
+  border-left-color: #667eea;
+}
+
+.comparison-row.expanded {
+  background: #e7f3ff;
+  border-left-color: #007bff;
+  font-weight: 600;
+}
+
+.comparison-row:last-child {
+  border-bottom: none;
+}
+
+.comparison-row .label {
+  font-weight: 600;
+  color: #555;
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.expand-icon {
+  font-size: 12px;
+  color: #667eea;
+  transition: transform 0.3s ease;
+}
+
+.comparison-row.expanded .expand-icon {
+  transform: rotate(0deg);
+}
+
+.comparison-row .values {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.comparison-row .value {
+  font-size: 18px;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 6px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.comparison-row .value.dev {
+  background: #d4edda;
+  color: #28a745;
+}
+
+.comparison-row .value.prod {
+  background: #cce5ff;
+  color: #007bff;
+}
+
+.comparison-row .diff {
+  font-size: 16px;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
+
+.comparison-row .diff.positive {
+  color: #28a745;
+}
+
+.comparison-row .diff.negative {
+  color: #dc3545;
+}
+
+.comparison-row .diff.neutral {
+  color: #6c757d;
+}
+
+.h1-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.h1-column {
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.h1-column.dev {
+  border-color: #28a745;
+}
+
+.h1-column.prod {
+  border-color: #007bff;
+}
+
+.h1-column h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.h1-text {
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.h1-text:last-child {
+  margin-bottom: 0;
+}
+
+/* Details Panel Styles */
+.details-panel {
+  background: #ffffff;
+  border: 2px solid #e7f3ff;
+  border-top: none;
+  padding: 20px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding: 0 20px;
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    padding: 20px;
+  }
+}
+
+.details-content {
+  font-size: 14px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.details-column {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.details-column h4 {
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 16px;
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 1;
+}
+
+.dev-column h4 {
+  color: #28a745;
+}
+
+.prod-column h4 {
+  color: #007bff;
+}
+
+.detail-item {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border-left: 3px solid #dee2e6;
+  transition: all 0.2s;
+}
+
+.dev-column .detail-item {
+  border-left-color: #28a745;
+}
+
+.prod-column .detail-item {
+  border-left-color: #007bff;
+}
+
+.detail-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(2px);
+}
+
+.tag-info {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.tag-index {
+  display: inline-block;
+  background: #6c757d;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.tag-src, .tag-href {
+  color: #007bff;
+  word-break: break-all;
+  margin-bottom: 5px;
+  font-family: 'Courier New', monospace;
+}
+
+.tag-content {
+  color: #6c757d;
+  font-style: italic;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.tag-alt, .tag-text, .tag-name {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.tag-attrs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #e9ecef;
+  color: #495057;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-type {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #d1ecf1;
+  color: #0c5460;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge.good {
+  background: #d4edda;
+  color: #155724;
+}
+
+.detail-more {
+  text-align: center;
+  padding: 10px;
+  color: #6c757d;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.differences-summary {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fff3cd;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+}
+
+.diff-group {
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.diff-group.added {
+  color: #28a745;
+}
+
+.diff-group.removed {
+  color: #dc3545;
+}
+
+.diff-group strong {
+  font-weight: 700;
+}
+
+.heading-info {
+  background: #f8f9fa;
+}
+
+.heading-level {
+  display: inline-block;
+  background: #667eea;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.heading-text {
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.detail-empty {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+  font-style: italic;
+  background: white;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .comparison-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .comparison-row .values {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .comparison-row .value {
+    min-width: 60px;
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+
+  .h1-content {
+    grid-template-columns: 1fr;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Development
+.git/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+
+# Misc
+.DS_Store
+*.log
+
+# Don't ignore api/ folder - it's needed for serverless functions
+!api/

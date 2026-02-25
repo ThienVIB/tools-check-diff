@@ -90,44 +90,157 @@ module.exports = function(app) {
       // Ignore SSL errors
       await page.setBypassCSP(true);
       
-      // Navigate and wait for network idle
+      // Navigate and wait for EVERYTHING to load
       await page.goto(url, {
-        waitUntil: 'networkidle2',
-        timeout: 30000
+        waitUntil: ['load', 'domcontentloaded', 'networkidle0'], // Wait for ALL network requests
+        timeout: 60000
       });
       
-      // Simulate scroll to trigger lazy loading
-      console.log(`📜 Simulating scroll to trigger lazy load...`);
+      console.log(`⏳ Waiting for client-side JavaScript to execute...`);
+      // Wait for client-side JS frameworks to render (React, Vue, Angular, etc.)
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      
+      // Simulate scroll to trigger lazy loading & client-side rendering
+      console.log(`📜 Simulating user interactions to trigger CSR...`);
       await page.evaluate(async () => {
-        // Scroll down slowly to trigger intersection observers
-        const scrollStep = 300;
-        const maxScroll = document.body.scrollHeight;
+        // Helper: Wait for mutations
+        const waitForMutations = (timeout = 2000) => {
+          return new Promise(resolve => {
+            let timer;
+            const observer = new MutationObserver(() => {
+              clearTimeout(timer);
+              timer = setTimeout(() => {
+                observer.disconnect();
+                resolve();
+              }, 500); // 500ms after last mutation
+            });
+            
+            observer.observe(document.body, {
+              childList: true,
+              subtree: true,
+              attributes: true,
+              attributeFilter: ['style', 'class', 'src', 'data-src']
+            });
+            
+            setTimeout(() => {
+              observer.disconnect();
+              resolve();
+            }, timeout);
+          });
+        };
+        
+        // Progressive scroll to trigger IntersectionObservers
+        console.log('Starting progressive scroll...');
+        const scrollStep = 200;
+        const scrollDelay = 150;
+        const maxScroll = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight
+        );
         
         for (let y = 0; y < maxScroll; y += scrollStep) {
           window.scrollTo(0, y);
-          await new Promise(r => setTimeout(r, 100));
+          window.dispatchEvent(new Event('scroll'));
+          await new Promise(r => setTimeout(r, scrollDelay));
         }
         
-        // Scroll to bottom
-        window.scrollTo(0, document.body.scrollHeight);
-        await new Promise(r => setTimeout(r, 1500));
-        
-        // Scroll to middle
-        window.scrollTo(0, document.body.scrollHeight / 2);
-        await new Promise(r => setTimeout(r, 1000));
-        
-        // Scroll to top
-        window.scrollTo(0, 0);
-        await new Promise(r => setTimeout(r, 1000));
-        
-        // Dispatch events to trigger lazy load
+        // Scroll to key positions
+        window.scrollTo(0, maxScroll); // Bottom
         window.dispatchEvent(new Event('scroll'));
-        window.dispatchEvent(new Event('resize'));
-        window.dispatchEvent(new Event('load'));
+        await new Promise(r => setTimeout(r, 1000));
+        
+        window.scrollTo(0, maxScroll / 2); // Middle
+        window.dispatchEvent(new Event('scroll'));
+        await new Promise(r => setTimeout(r, 1000));
+        
+        window.scrollTo(0, 0); // Top
+        window.dispatchEvent(new Event('scroll'));
+        await new Promise(r => setTimeout(r, 1000));
+        
+        // Trigger all possible lazy-load events
+        console.log('Dispatching events...');
+        ['scroll', 'resize', 'load', 'DOMContentLoaded', 'readystatechange'].forEach(eventType => {
+          window.dispatchEvent(new Event(eventType));
+          document.dispatchEvent(new Event(eventType));
+        });
+        
+        // Wait for any DOM mutations from lazy-load
+        console.log('Waiting for DOM mutations...');
+        await waitForMutations(3000);
+        
+        // Force apply lazy-load attributes to actual attributes
+        console.log('Force applying lazy-load attributes...');
+        const lazySelectors = [
+          'img[data-src]', 'img[data-lazy]', 'img[data-original]', 
+          'img[data-lazy-src]', 'img[data-lazyload]', 'source[data-srcset]',
+          '[data-bg]', '[data-background]', '[data-background-image]', '[data-bgset]'
+        ];
+        
+        const lazyElements = document.querySelectorAll(lazySelectors.join(','));
+        console.log(`Found ${lazyElements.length} lazy-load elements`);
+        
+        lazyElements.forEach((el) => {
+          // Handle img tags
+          if (el.tagName === 'IMG' || el.tagName === 'SOURCE') {
+            const src = el.getAttribute('data-src') || 
+                       el.getAttribute('data-lazy') || 
+                       el.getAttribute('data-original') ||
+                       el.getAttribute('data-lazy-src') ||
+                       el.getAttribute('data-lazyload');
+            
+            if (src) {
+              if (el.tagName === 'IMG') {
+                el.setAttribute('src', src);
+                el.removeAttribute('data-src');
+                el.removeAttribute('data-lazy');
+                el.removeAttribute('data-original');
+                el.removeAttribute('data-lazy-src');
+                el.removeAttribute('data-lazyload');
+              } else if (el.tagName === 'SOURCE') {
+                el.setAttribute('srcset', src);
+              }
+            }
+          }
+          
+          // Handle background images
+          const bg = el.getAttribute('data-bg') ||
+                    el.getAttribute('data-background') ||
+                    el.getAttribute('data-background-image') ||
+                    el.getAttribute('data-bgset');
+          
+          if (bg) {
+            el.style.backgroundImage = `url(${bg})`;
+            el.removeAttribute('data-bg');
+            el.removeAttribute('data-background');
+            el.removeAttribute('data-background-image');
+            el.removeAttribute('data-bgset');
+          }
+        });
+        
+        // Find ALL elements with background-image set by JS (not CSS)
+        console.log('Scanning for JS-set background images...');
+        const allElements = document.querySelectorAll('*');
+        let bgCount = 0;
+        allElements.forEach((el) => {
+          const computedStyle = window.getComputedStyle(el);
+          const bgImage = computedStyle.backgroundImage;
+          
+          // If has background-image but not in inline style, it might be set by JS
+          if (bgImage && bgImage !== 'none' && !el.style.backgroundImage) {
+            // Copy computed background-image to inline style so we can capture it
+            el.style.backgroundImage = bgImage;
+            bgCount++;
+          }
+        });
+        console.log(`Applied ${bgCount} background-images from computed styles`);
+        
+        // Final mutation wait
+        await waitForMutations(2000);
       });
       
-      // Wait for lazy content to load
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      console.log(`⏳ Final wait for all resources to load...`);
+      // Final wait for images to actually load
+      await new Promise(resolve => setTimeout(resolve, 5000));
       
       // Get rendered HTML
       const html = await page.content();

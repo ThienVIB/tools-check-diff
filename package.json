@@ -4,6 +4,7 @@
   "description": "Tool to compare DOM, SEO, and Performance between Dev and Production URLs",
   "private": true,
   "dependencies": {
+    "@sparticuz/chromium": "^143.0.4",
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
@@ -20,6 +21,7 @@
     "pixelmatch": "^7.1.0",
     "pngjs": "^7.0.0",
     "puppeteer": "^24.37.5",
+    "puppeteer-core": "^24.37.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",

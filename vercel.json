@@ -3,12 +3,12 @@
   "outputDirectory": "build",
   "functions": {
     "api/render.js": {
-      "memory": 3008,
-      "maxDuration": 60
+      "memory": 1024,
+      "maxDuration": 10
     },
     "api/proxy.js": {
-      "memory": 1024,
-      "maxDuration": 30
+      "memory": 512,
+      "maxDuration": 10
     }
   }
 }

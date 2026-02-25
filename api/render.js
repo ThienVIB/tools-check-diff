@@ -82,17 +82,17 @@ module.exports = async (req, res) => {
     
     // Navigate and wait
     await page.goto(url, {
-      waitUntil: ['load', 'domcontentloaded', 'networkidle0'],
-      timeout: 50000 // Vercel has 10s limit for Hobby, 60s for Pro
+      waitUntil: ['load', 'domcontentloaded'],
+      timeout: 8000 // Hobby plan has 10s timeout total
     });
     
-    console.log(`⏳ Waiting for client-side JavaScript...`);
-    await new Promise(resolve => setTimeout(resolve, 3000)); // Reduced from 5s for serverless timeout
+    console.log(`⏳ Quick JS wait...`);
+    await new Promise(resolve => setTimeout(resolve, 500)); // Minimal wait
     
-    // Simulate user interactions (optimized for serverless)
-    console.log(`📜 Simulating interactions...`);
+    // Quick interactions (optimized for 10s timeout)
+    console.log(`📜 Quick interactions...`);
     await page.evaluate(async () => {
-      const waitForMutations = (timeout = 1500) => {
+      const waitForMutations = (timeout = 500) => {
         return new Promise(resolve => {
           let timer;
           const observer = new MutationObserver(() => {
@@ -100,7 +100,7 @@ module.exports = async (req, res) => {
             timer = setTimeout(() => {
               observer.disconnect();
               resolve();
-            }, 300);
+            }, 100);
           });
           
           observer.observe(document.body, {
@@ -117,9 +117,9 @@ module.exports = async (req, res) => {
         });
       };
       
-      // Quick progressive scroll (optimized)
-      const scrollStep = 300;
-      const scrollDelay = 100; // Faster
+      // Quick scroll (50ms delay)
+      const scrollStep = 500;
+      const scrollDelay = 50;
       const maxScroll = Math.max(
         document.body.scrollHeight,
         document.documentElement.scrollHeight
@@ -131,18 +131,18 @@ module.exports = async (req, res) => {
         await new Promise(r => setTimeout(r, scrollDelay));
       }
       
-      // Key positions
+      // Key positions (200ms each)
       window.scrollTo(0, maxScroll);
       window.dispatchEvent(new Event('scroll'));
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 200));
       
       window.scrollTo(0, maxScroll / 2);
       window.dispatchEvent(new Event('scroll'));
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 200));
       
       window.scrollTo(0, 0);
       window.dispatchEvent(new Event('scroll'));
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 200));
       
       // Trigger events
       ['scroll', 'resize', 'load', 'DOMContentLoaded'].forEach(eventType => {
@@ -150,7 +150,7 @@ module.exports = async (req, res) => {
         document.dispatchEvent(new Event(eventType));
       });
       
-      await waitForMutations(1500);
+      await waitForMutations(500);
       
       // Force lazy-load
       const lazySelectors = [
@@ -199,11 +199,11 @@ module.exports = async (req, res) => {
         }
       });
       
-      await waitForMutations(1000);
+      await waitForMutations(500);
     });
     
-    console.log(`⏳ Final wait...`);
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Reduced from 5s
+    console.log(`⏳ Final quick wait...`);
+    await new Promise(resolve => setTimeout(resolve, 500)); // Minimal final wait
     
     // Get HTML
     const html = await page.content();

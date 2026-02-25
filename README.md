@@ -72,11 +72,55 @@ npm install
 
 ## 🏃‍♂️ Chạy ứng dụng
 
+### Option 1: Local only (chỉ bạn dùng)
 ```bash
 npm start
 ```
+App mở tại: http://localhost:3000
 
-App sẽ mở tại: [http://localhost:3000](http://localhost:3000)
+### Option 2: Share với team (expose ra internet)
+
+**Recommended: Dùng ngrok**
+```bash
+# Lần đầu: Cài ngrok
+brew install ngrok/ngrok/ngrok
+
+# Chạy
+./start-with-ngrok.sh
+```
+
+Bạn sẽ nhận được URL public như: `https://abc123.ngrok.io`  
+→ Share URL này cho team!
+
+**Alternative: Cloudflared (free, no signup)**
+```bash
+# Cài cloudflared
+brew install cloudflare/cloudflare/cloudflared
+
+# Terminal 1: Start server
+npm start
+
+# Terminal 2: Create tunnel
+cloudflared tunnel --url http://localhost:3000
+```
+
+📖 Xem chi tiết: [NGROK_GUIDE.md](./NGROK_GUIDE.md)
+
+## ⚠️ Lưu ý quan trọng
+
+### Tại sao KHÔNG deploy lên Vercel/Netlify?
+
+VIB website có **WAF/Firewall** chặn requests từ cloud providers:
+- ❌ Vercel, Netlify, AWS Lambda → Bị chặn
+- ✅ IP cá nhân (local) → OK
+- ✅ VPS với IP tĩnh → OK
+
+**Giải pháp:**
+1. ✅ Dùng local + ngrok/cloudflared (free, dễ nhất)
+2. ✅ Deploy lên VPS (Oracle Cloud free tier)
+3. ❌ KHÔNG dùng serverless platforms
+
+📖 Xem chi tiết: [PROXY_GUIDE.md](./PROXY_GUIDE.md)
 
 ## 📂 Cấu trúc Project
 

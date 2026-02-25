@@ -22,6 +22,51 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'URL parameter is required' });
   }
   
+  // Validate URL format
+  try {
+    const urlObj = new URL(url);
+    if (!urlObj.protocol.startsWith('http')) {
+      return res.status(400).json({ 
+        error: 'Invalid URL protocol. Must be http or https',
+        url: url
+      });
+    }
+    // Check for valid TLD
+    const hostname = urlObj.hostname;
+    const parts = hostname.split('.');
+    const tld = parts[parts.length - 1];
+    
+    // Common valid TLDs
+    const validTLDs = ['com', 'net', 'org', 'vn', 'edu', 'gov', 'mil', 'io', 'co', 'app', 'dev'];
+    
+    if (parts.length < 2) {
+      return res.status(400).json({ 
+        error: 'Invalid domain. Must include TLD (e.g., .com, .vn)',
+        url: url
+      });
+    }
+    
+    // Check if TLD is suspiciously short (likely incomplete)
+    if (!validTLDs.includes(tld) && tld.length < 3) {
+      return res.status(400).json({ 
+        error: `Invalid or uncommon TLD ".${tld}". Did you mean one of these?`,
+        url: url,
+        suggestions: [
+          url.replace(hostname, hostname + '.com.vn'),
+          url.replace(hostname, hostname + '.com'),
+          url.replace('.' + tld, '.com.vn'),
+          url.replace('.' + tld, '.com')
+        ]
+      });
+    }
+  } catch (e) {
+    return res.status(400).json({ 
+      error: 'Invalid URL format. Must be a valid URL (e.g., https://example.com)',
+      url: url,
+      details: e.message
+    });
+  }
+  
   console.log(`🚀 [Vercel] Rendering URL: ${url}`);
   
   let browser;

@@ -1,53 +1,111 @@
-# 🔧 Hướng dẫn Fix vấn đề CORS với URL nội bộ
+# 🔧 VIB Tools - Local Only Solution
 
-## Vấn đề
-URL nội bộ công ty (VD: `https://pws-dev.vib/`) không fetch được do:
-- CORS policy chặn request từ localhost
-- URL chỉ truy cập được trong mạng nội bộ công ty
+## ⚠️ QUAN TRỌNG: Chỉ chạy được LOCAL
 
-## Giải pháp đã implement
+### Vấn đề khi deploy lên Vercel/Cloud:
 
-### 1. **setupProxy.js** - Local Proxy Server
-File `/src/setupProxy.js` tạo proxy server chạy cùng với React dev server để bypass CORS.
+VIB website có **WAF/Firewall policy** chặn requests từ:
+- ❌ Cloud providers (Vercel, AWS, Google Cloud, Azure)
+- ❌ Data centers
+- ❌ Known bot IPs
 
-### 2. **App.tsx** - Smart Fetch với 3 fallback levels
-Code sẽ tự động thử 3 cách fetch theo thứ tự:
+Nhưng cho phép:
+- ✅ IP cá nhân (máy local của bạn)
+- ✅ IP được whitelist
 
-1. **Direct Fetch** (ưu tiên nhất)
-   - Fetch trực tiếp URL
-   - Hoạt động nếu URL cho phép CORS hoặc cùng origin
-   
-2. **Local Proxy** (nếu direct fail)
-   - Fetch qua `/api/fetch?url=...`
-   - Proxy server sẽ fetch thay và trả về kết quả
-   - **Giải pháp tốt nhất cho URL nội bộ**
-   
-3. **Public CORS Proxy** (nếu cả 2 cách trên fail)
-   - Dùng `https://api.allorigins.win`
-   - Cho URL public (google.com, etc.)
-
-## Cách sử dụng
-
-### Bước 1: Start server
-```bash
-npm start
+```
+Local (your IP) → VIB ✅ OK
+Vercel (cloud IP) → VIB ❌ 403 Forbidden (WAF blocked)
 ```
 
-### Bước 2: Test với URL nội bộ
-Ví dụ:
-- **Dev URL**: `https://pws-dev.vib/`
-- **Prod URL**: `https://pws.vib.com.vn/`
+## ✅ Giải pháp: Chỉ dùng Local
 
-### Bước 3: Xem console log
-Mở DevTools (F12) → Console để xem:
-- Fetch method nào được dùng
-- Lỗi gì nếu có
+### Cách dùng hàng ngày:
 
-## Lưu ý quan trọng
+```bash
+# 1. Clone repository (chỉ lần đầu)
+git clone https://github.com/ThienVIB/tools-check-diff
+cd tools-check-diff
 
-### ⚠️ Đảm bảo có kết nối mạng nội bộ
-- URL dev chỉ truy cập được khi máy bạn kết nối VPN/mạng công ty
-- Nếu không kết nối được, cả 3 method đều sẽ fail
+# 2. Install (chỉ lần đầu hoặc khi update)
+npm install
+
+# 3. Start dev server
+npm start
+
+# 4. Mở browser
+http://localhost:3000
+```
+
+### Cho team members:
+
+Mỗi người chạy trên máy của mình:
+1. Clone repo về
+2. `npm install`
+3. `npm start`
+4. Done! ✅
+
+## 🚀 Alternative: Deploy lên VPS (nếu muốn share)
+
+Nếu cần share tool cho team mà không muốn mọi người phải cài:
+
+### Option 1: Oracle Cloud (FREE forever)
+- 2 VMs, 24GB RAM, miễn phí vĩnh viễn
+- IP tĩnh (có thể whitelist nếu cần)
+
+**Setup:**
+```bash
+# Trên VPS
+sudo apt update
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs git
+
+git clone https://github.com/ThienVIB/tools-check-diff
+cd tools-check-diff
+npm install
+npm run build
+
+# Serve với PM2
+npm install -g pm2 serve
+pm2 start "serve -s build -l 80" --name vib-tools
+pm2 save
+pm2 startup
+```
+
+Access: `http://VPS_IP`
+
+### Option 2: Railway.app (có free tier)
+Deploy như Vercel nhưng có IP riêng, ít bị chặn hơn.
+
+## ❌ Tại sao không dùng Proxy?
+
+Có thể dùng proxy services như:
+- ScraperAPI ($29/tháng)
+- Bright Data ($500/tháng)  
+- Oxylabs ($99/tháng)
+
+Nhưng **đắt và không cần thiết** cho internal tool.
+
+## 📊 So sánh giải pháp:
+
+| Method | Chi phí | Hoạt động? | Khuyến nghị |
+|--------|---------|------------|-------------|
+| **npm start (local)** | Free | ✅ Yes | ⭐ **Best** |
+| **Vercel** | Free | ❌ No | WAF chặn |
+| **VPS (Oracle)** | Free | ✅ Yes | Good cho team |
+| **Railway** | $5/mo | ✅ Maybe | Chưa test |
+| **Proxy service** | $30-500 | ✅ Yes | Quá đắt |
+
+## 🎯 Kết luận:
+
+**➡️ Chỉ cần `npm start` trên máy local!**
+
+- Free ✅
+- Nhanh ✅  
+- Không bị chặn ✅
+- Đơn giản ✅
+
+Nếu muốn share: Deploy lên Oracle Cloud FREE tier.
 
 ### 🔐 HTTPS với Self-Signed Certificate
 Nếu URL dev dùng HTTPS với certificate tự ký:

@@ -20,6 +20,35 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'URL parameter is required' });
   }
   
+  // Validate URL format
+  try {
+    const urlObj = new URL(url);
+    if (!urlObj.protocol.startsWith('http')) {
+      return res.status(400).json({ 
+        error: 'Invalid URL protocol. Must be http or https',
+        url: url
+      });
+    }
+    // Check for valid TLD
+    const hostname = urlObj.hostname;
+    const parts = hostname.split('.');
+    const tld = parts[parts.length - 1];
+    const validTLDs = ['com', 'net', 'org', 'vn', 'edu', 'gov', 'mil', 'io', 'co', 'app', 'dev'];
+    if (parts.length < 2 || (!validTLDs.includes(tld) && tld.length < 3)) {
+      return res.status(400).json({ 
+        error: `Invalid domain or TLD ".${tld}"`,
+        url: url,
+        suggestions: [url.replace(hostname, hostname + '.com')]
+      });
+    }
+  } catch (e) {
+    return res.status(400).json({ 
+      error: 'Invalid URL format',
+      url: url,
+      details: e.message
+    });
+  }
+  
   console.log(`🔄 [Vercel] Proxying: ${url}`);
   
   try {
